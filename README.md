@@ -1,12 +1,9 @@
-﻿Acknowledgement: We appreciate your attention to our documentation.
+For a full detail description in PDF format of how the ISA design was implemented Please read the ISA_design PDF!
 
 
 Technical Overview: Our machine code is comprised of three opcode types and four registers, of which 'mem' is one, and the remaining three pertain to registers in use.
 
-
-
 Below is a breakdown of the opcodes and registers utilized in our assembler to convert assembly code into machine code:
-
 
 
 * Opcodes: { 'add' : '000', 'beq' : '001', 'sb' : '010', 'lbu' : '011', 'xor' : '100', 'or' : '101', 'and' : '110', 'srl' : '111', 'li' : '00000' }
@@ -14,32 +11,18 @@ Below is a breakdown of the opcodes and registers utilized in our assembler to c
 * Registers: { 'mem' : '00', '$t1' : '01', '$t2' : '10', '$t3' : '11' }
 
 
-
 For opcode representation, we have allocated 3 bits. Notably, a 5-bit code '00000' has been introduced for the 'li' operation. This decision was taken because we have ensured that '00000' will not be employed in any other machine code context. Thus, '00000' remains exclusively reserved for the 'li' operation.
 
 Of particular importance are the operations 'beq' and 'li', which present complexities distinct from the other operations outlined.
 
 
-
-
-
 ######################### Block on li and beq #########################
 
-
-
-
-
 li and beq have 2 flags.
-
-
-
-
 
 li: li and ALUSrc
 
 beq: beq and beqflag
-
-
 
 
 
@@ -52,45 +35,17 @@ For context, after an opcode is identified, the ensuing 2 bits represent a regis
 000000100    << 7 bit integer of value 4 to be stores in $t1
 
 
-
-
-
 000000100, we know we are doing an li on $t1, so we set li = 1 and do nothing else
 
 000000100, because li = 1 we know the previous instruction was li, so set ALUSrc = 1 and store '0000100' as a 7 bit integer into $t1
 
 
-
-
-
 beq works in a similar way with 2 flags.
-
-
-
-
-
-
-
-
 
 ######################### Block on li and beq #########################
 
 
-
-
-
-
-
-
-
-
-
-
-
 ######################### Our Test Cases Block  #########################
-
-
-
 
 
 initial begin
@@ -102,9 +57,6 @@ initial begin
   dut.rf1.core[2] = 9'b000000011;
 
   dut.ir1.core[0] = 9'b000110110;
-
-
-
 
 
   reset = 0;
@@ -120,17 +72,11 @@ initial begin
   #10 $display("\nCore 1: %0d\n",dut.rf1.core[3]);
 
 
-
-
-
   // Case 2: store register 3 into memory 1
 
   dut.rf1.core[3] = 9'b000000111;
 
   dut.ir1.core[0] = 9'b010110001;
-
-
-
 
 
   reset = 0;
@@ -146,9 +92,6 @@ initial begin
   #10 $display("\nCore 2: %0d\n",dut.dm1.core[1]);
 
 
-
-
-
   // Case 3: Read register from memory 3 into register 1
 
   dut.rf1.core[3] = 9'b000000011;
@@ -156,8 +99,6 @@ initial begin
   dut.dm1.core[3] = 9'b000000001;
 
   dut.ir1.core[0] = 9'b011010011;
-
-
 
 
 
@@ -173,10 +114,6 @@ initial begin
 
   #10 $display("\nCore 3: %0d\n",dut.rf1.core[1]);
 
-
-
-
-
   // Case 4: 3 XOR 1
 
   dut.rf1.core[1] = 9'b000000001;
@@ -184,9 +121,6 @@ initial begin
   dut.rf1.core[2] = 9'b000000011;
 
   dut.ir1.core[0] = 9'b100110110;
-
-
-
 
 
   reset = 0;
@@ -202,9 +136,6 @@ initial begin
   #10 $display("\nCore 4: %0d\n",dut.rf1.core[3]);
 
 
-
-
-
   // Case 5: 3 OR 1
 
   dut.rf1.core[1] = 9'b000000001;
@@ -212,9 +143,6 @@ initial begin
   dut.rf1.core[2] = 9'b000000011;
 
   dut.ir1.core[0] = 9'b101110110;
-
-
-
 
 
   reset = 0;
@@ -230,9 +158,6 @@ initial begin
   #10 $display("\nCore 5: %0d\n",dut.rf1.core[3]);
 
 
-
-
-
   // Case 6: 3 AND 1
 
   dut.rf1.core[1] = 9'b000000001;
@@ -240,9 +165,6 @@ initial begin
   dut.rf1.core[2] = 9'b000000011;
 
   dut.ir1.core[0] = 9'b110110110;
-
-
-
 
 
   reset = 0;
@@ -257,10 +179,6 @@ initial begin
 
   #10 $display("\nCore 6: %0d\n",dut.rf1.core[3]);
 
-
-
-
-
   // Case 7: 3 >> 1
 
   dut.rf1.core[1] = 9'b000000001;
@@ -268,9 +186,6 @@ initial begin
   dut.rf1.core[2] = 9'b000000011;
 
   dut.ir1.core[0] = 9'b111110110;
-
-
-
 
 
   reset = 0;
@@ -286,13 +201,6 @@ initial begin
   #10 $display("\nCore 7: %0d\n",dut.rf1.core[3]);
 
 
-
-
-
-
-
-
-
   // Case 8: Store 3 into register 1 and store it into memory 3 and read it into register 2
 
   dut.rf1.core[1] = 9'b000000011;
@@ -300,9 +208,6 @@ initial begin
   dut.ir1.core[0] = 9'b010010001;
 
   dut.ir1.core[1] = 9'b011100001;
-
-
-
 
 
   reset = 0;
@@ -318,13 +223,6 @@ initial begin
   #10 $display("\nCore 8: %0d\n",dut.rf1.core[2]);
 
 
-
-
-
-
-
-
-
   // Case 9: Store 3 into register 1 and 4 into register 2, then register 3 = ((reg1 + reg2) & reg2) ^ reg1
 
   dut.rf1.core[1] = 9'b000000011;
@@ -338,9 +236,6 @@ initial begin
   dut.ir1.core[2] = 9'b100111101;
 
 
-
-
-
   reset = 0;
 
   #10 reset = 1;
@@ -352,9 +247,6 @@ initial begin
   #10 error[8] = (((9'b000000011 + 9'b000000100) & 9'b000000100) ^ 9'b000000011) != dut.rf1.core[3];
 
   #10 $display("\nCore 9: %0d\n",dut.rf1.core[3]);
-
-
-
 
 
   // Case 11: Beq jump
@@ -383,10 +275,6 @@ initial begin
 
   dut.ir1.core[9] = 9'b000010110;
 
-
-
-
-
   reset = 0;
 
   #10 reset = 1;
@@ -400,14 +288,6 @@ initial begin
   #10 $display("\nCore 11: %0d\n",dut.rf1.core[1]);
 
   #10 $display("\nCore 11 - B: %0d\n",dut.rf1.core[2]);
-
-
-
-
-
-
-
-
 
   #10 $display("\nError detect for case 1: ",error[0]);
 
@@ -436,17 +316,6 @@ initial begin
 end
 
 endmodule
-
-
-
-
-
-
-
-
-
-
-
 
 
 and the output:
@@ -488,41 +357,3 @@ and the output:
 #
 
 # Error detect for case 11: 0
-
-
-
-
-
-In collaboration with our Technical Assistant, Janav, we dedicated efforts on Saturday evening to align our work with the instructional framework and ensure the functionality of our code in Verilog. A review of the preceding testbench code and its corresponding output indicates that our test cases were successful. However, it is worth noting that our machine code did not meet the criteria set by the provided grading scheme.
-
-
-
-
-
-
-
-######################### Our Test Cases Block  #########################
-
-
-
-
-
-
-
-
-
-######################### Known issues  #########################
-
-
-
-
-
-We have identified a key issue wherein our assembly code does not function as expected. Specifically, Programs 1 and 2 fail to generate the intended output. The absence of a functional assembly program inhibits our ability to implement the corresponding Verilog code effectively. Consequently, our primary objective is to rectify the assembly code discrepancies.
-
-Additionally, there is a potential risk associated with the 'beq' and 'li' operations in the Verilog code. These operations share a similar structure, and executing machine code with consecutive lines of 'beq' followed by 'li' may lead to interpretative errors. Our subsequent course of action involves testing for this potential issue and enhancing the Verilog code to mitigate such risks.
-
-
-
-
-
-######################### Known issues  #########################

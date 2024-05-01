@@ -1,0 +1,131 @@
+        li $t1, 1
+	xor $t2, $t2, $t1 # p8 = int(mem[1][5])
+	li $t1, 0
+	xor $t2, $t2, $t1 # p8 = p8 ^ int(mem[1][6])
+	li $t1, 1
+	xor $t2, $t2, $t1 # p8 = p8 ^ int(mem[1][7])
+	li $t1, 0
+	xor $t2, $t2, $t1 # p8 = p8 ^ int(mem[0][0])
+	li $t1, 1
+	xor $t2, $t2, $t1 # p8 = p8 ^ int(mem[0][1])
+	li $t1, 0
+	xor $t2, $t2, $t1 # p8 = p8 ^ int(mem[0][2])
+	li $t1, 1
+	xor $t2, $t2, $t1 # p8 = p8 ^ int(mem[0][3])
+	li $t1, 60
+	sb $t2, mem($t1) # Store p8 in mem[60]
+		
+	li $t1, 1
+	xor $t2, $t2, $t1 # p4 = int(mem[1][5])
+	li $t1, 0
+	xor $t2, $t2, $t1 # p4 = p4 ^ int(mem[1][6])
+	li $t1, 1
+	xor $t2, $t2, $t1 # p4 = p4 ^ int(mem[1][7])
+	li $t1, 0
+	xor $t2, $t2, $t1 # p4 = p4 ^ int(mem[0][0])
+	li $t1, 0
+	xor $t2, $t2, $t1 # p4 = p4 ^ int(mem[0][4])
+	li $t1, 1
+	xor $t2, $t2, $t1 # p4 = p4 ^ int(mem[0][5])
+	li $t1, 0
+	xor $t2, $t2, $t1 # p4 = p4 ^ int(mem[0][6])
+	li $t1, 64
+	sb $t2, mem($t1) # Store p4 in mem[64]
+	
+	li $t1, 1
+	xor $t2, $t2, $t1 # p2 = int(mem[1][5])
+	li $t1, 0
+	xor $t2, $t2, $t1 # p2 = p2 ^ int(mem[1][6])
+	li $t1, 1
+	xor $t2, $t2, $t1 # p2 = p2 ^ int(mem[0][1])
+	li $t1, 0
+	xor $t2, $t2, $t1 # p2 = p2 ^ int(mem[0][2])
+	li $t1, 1
+	xor $t2, $t2, $t1 # p2 = p2 ^ int(mem[0][4])
+	li $t1, 0
+	xor $t2, $t2, $t1 # p2 = p2 ^ int(mem[0][5])
+	li $t1, 1
+	xor $t2, $t2, $t1 # p2 = p2 ^ int(mem[0][7])
+	li $t1, 68
+	sb $t2, mem($t1) # Store p2 in mem[68]
+		
+	li $t1, 1
+	xor $t2, $t2, $t1 #p1 = int(mem[1][5])
+	li $t1, 1
+	xor $t2, $t2, $t1 #p1 = p1 ^ int(mem[1][7])
+	li $t1, 1
+	xor $t2, $t2, $t1 #p1 = p1 ^ int(mem[0][1])
+	li $t1, 1
+	xor $t2, $t2, $t1 #p1 = p1 ^ int(mem[0][3])
+	li $t1, 0
+	xor $t2, $t2, $t1 #p1 = p1 ^ int(mem[0][4])
+	li $t1, 0
+	xor $t2, $t2, $t1 #p1 = p1 ^ int(mem[0][6])
+	li $t1, 1
+	xor $t2, $t2, $t1 #p1 = p1 ^ int(mem[0][7])
+	li $t1, 72
+	sb $t2, mem($t1) # Store p1 in mem[72]
+
+	li $t1, 1
+	xor $t2, $t2, $t1 #p0 = int(mem[1][5])
+	li $t1, 0
+	xor $t2, $t2, $t1 #p0 = p0 ^ int(mem[1][6])
+	li $t1, 1
+	xor $t2, $t2, $t1 #p0 = p0 ^ int(mem[1][7])	
+	li $t1, 0
+	xor $t2, $t2, $t1 #p0 = p0 ^ int(mem[0][0])
+	li $t1, 1
+	xor $t2, $t2, $t1 #p0 = p0 ^ int(mem[0][1])
+	li $t1, 0
+	xor $t2, $t2, $t1 #p0 = p0 ^ int(mem[0][2])
+	li $t1, 1
+	xor $t2, $t2, $t1 #p0 = p0 ^ int(mem[0][3])
+	li $t1, 0
+	xor $t2, $t2, $t1 #p0 = p0 ^ int(mem[0][4])
+	li $t1, 1
+	xor $t2, $t2, $t1 #p0 = p0 ^ int(mem[0][5])
+	li $t1, 0
+	xor $t2, $t2, $t1 #p0 = p0 ^ int(mem[0][6])
+	li $t1, 1
+	xor $t2, $t2, $t1 #p0 = p0 ^ int(mem[0][7])
+	li $t1, 72
+	lbu $t3, mem($t1)
+	xor $t2, $t2, $t3 #p0 = p0 ^ p1
+	li $t1, 68
+	lbu $t3, mem($t1)
+	xor $t2, $t2, $t3 #p0 = p0 ^ p2
+	li $t1, 64
+	lbu $t3, mem($t1)
+	xor $t2, $t2, $t3 #p0 = p0 ^ p4
+	li $t1, 60
+	lbu $t3, mem($t1)
+	xor $t2, $t2, $t3 #p0 = p0 ^ p8
+	li $t1, 76
+	sb $t2, mem($t1) # Store p0 in mem[76]
+	
+	li $t1, 5	  # mem[31] = (mem[1][5:]), also known as '101'
+	li $t2, 5	  
+	add $t1, $t1, $t2 # mem[31] =mem[31] + mem[0][0:4], also known as '0101'
+	li $t2, 60
+	lbu $t3, mem($t1)
+	add $t2, $t2, $t3 # mem[31] = mem[31] + str(p8)
+	li $t2, 31
+	sb $t1, mem($t2)	  # Store in mem[31]
+	
+	li $t1, 5     # mem[30] = mem[0][4:7], also known as '0101'
+	li $t2, 64
+	lbu $t3, mem($t2)
+	add $t1, $t1, $t3 # mem[30] = mem[30] + str(p4)
+	li $t3, 1
+	add $t1, $t1, $t3 # mem[30] = mem[30] + mem[0][7:8]; mem[0][7:8] = '01'
+	li $t2, 68
+	lbu $t3, mem($t2)
+	add $t1, $t1, $t3 # mem[30] = mem[30] + str(p2)
+	li $t2, 72
+	lbu $t3, mem($t2)
+	add $t1, $t1, $t3 # mem[30] = mem[30] + str(p1)
+	li $t2, 76
+	lbu $t3, mem($t2)
+	add $t1, $t1, $t3 # mem[30] = mem[30] + str(p0)
+	li $t2, 31
+	sb $t1, mem($t2)    # Store in mem[30]

@@ -1,0 +1,272 @@
+# Inputs: None (starts with default values)
+# Outputs: Decoded data in mem[0:119]
+
+main:
+    li $t3, 60          # Starting point at mem[120] for encoded data
+
+loop:
+    # Checking if we've reached mem[240], which is the end
+    li $t1, 180
+    beq $t3, $t1, end
+
+    # Load encoded_lsw and encoded_msw
+    lbu $t1, mem($t3)      # Load encoded_lsw
+    li $t2, 4   # ADD
+    add $t3, $t3, $t2      # Move to next block
+    lbu $t2, mem($t3)      # Load encoded_msw
+
+    # Call the function to extract data and parity bits
+    beq $t3, $t3, extract_data_and_parity_bits
+
+loop_continue_first:
+    # Call the function to decode the block and determine errors
+    beq $t3, $t3, decode_one_block
+
+loop_continue_second:
+    # Store the result in mem[0:119]
+    sb $t1, mem($t3)      # Store corrected_lsw
+    li $t1, 4   # ADD
+    add $t3, $t3, $t1
+    sb $t2, mem($t3)       # Store F1F0 + '00000' + corrected_msw
+    
+    # Move to the next block of encoded data
+    li $t1, 4   # ADD
+    add $t3, $t3, $t1
+    beq $t3, $t3, loop  # Continue the loop
+
+end:
+    nop                  # End of the program
+
+
+# Inputs: $t1 (encoded_msw), $t2 (encoded_lsw)
+# Outputs: $t1 (data_msw), $t2 (data_lsw), mem[244] (p8), mem[248] (p4), mem[252] (p2), mem[256] (p1), mem[260] (p0)
+
+extract_data_and_parity_bits:
+    # Extracting p8 from encoded_msw
+    li $t3, 32
+    and $t3, $t1, $t3
+    li $t1, 7   ####
+    srl $t3, $t3, $t1
+    li $t1, 81
+    sb $t3, mem($t1)  # Store p8 to mem[244]
+
+    # Extracting data_msw from encoded_msw
+    li $t3, 36
+    and $t1, $t1, $t3
+
+    # Extracting p4 from encoded_lsw
+    li $t3, 2
+    and $t3, $t2, $t3
+    li $t1, 3   ####
+    srl $t3, $t3, $t1
+    li $t1, 82
+    sb $t3, mem($t1)  # Store p4 to mem[248]
+
+    # Extracting p2 from encoded_lsw
+    li $t3, 4
+    and $t3, $t2, $t3
+    li $t1, 5   ####
+    srl $t3, $t3, $t1
+    li $t1, 83
+    sb $t3, mem($t1)  # Store p2 to mem[252]
+
+    # Extracting p1 from encoded_lsw
+    li $t3, 16
+    and $t3, $t2, $t3
+    li $t1, 6   ####
+    srl $t3, $t3, $t1
+    li $t1, 84
+    sb $t3, mem($t1)  # Store p1 to mem[256]
+
+    # Extracting p0 from encoded_lsw
+    li $t3, 32
+    and $t3, $t2, $t3
+    li $t1, 7   ####
+    srl $t3, $t3, $t1
+    li $t1, 85
+    sb $t3, mem($t1)  # Store p0 to mem[260]
+
+    # Extracting data_lsw from encoded_lsw
+    li $t3, 23   # This mask gets bits 0, 1, 2, and 4
+    and $t2, $t2, $t3
+
+    beq $t3, $t3, loop_continue_first
+
+
+
+# Inputs: $t1 (data_msw), $t2 (data_lsw)
+# Outputs: mem[264] (p4), mem[268] (p2), mem[272] (p1), mem[276] (p0), mem[280] (p8)
+
+calculate_expected_parity_bits:
+    # For p4
+    li $t3, 61
+    and $t3, $t1, $t3      # Extract relevant bits from data_msw
+    li $t3, 7
+    and $t3, $t2, $t3      # Add relevant bits from data_lsw (bits b4, b3, and b2)
+    xor $t1, $t1, $t3      # XOR operation for all bits
+    li $t3, 66
+    sb $t1, mem($t3)     # Store the calculated p4 in mem[264]
+
+    # For p2
+    li $t3, 48
+    and $t3, $t1, $t3      # Extract relevant bits from data_msw
+    li $t3, 11
+    and $t3, $t2, $t3      # Add relevant bits from data_lsw (bits b4, b3, and b1)
+    xor $t1, $t1, $t3      # XOR operation for all bits
+    li $t3, 67
+    sb $t1, mem($t3)     # Store the calculated p2 in mem[268]
+
+    # For p1
+    li $t3, 42
+    and $t3, $t1, $t3      # Extract relevant bits from data_msw
+    li $t3, 10
+    and $t3, $t2, $t3      # Add relevant bits from data_lsw (bits b4, b2, and b1)
+    xor $t1, $t1, $t3      # XOR operation for all bits
+    li $t3, 68
+    sb $t1, mem($t3)     # Store the calculated p1 in mem[272]
+
+    # For p0
+    or $t3, $t1, $t2       # Combine both data_msw and data_lsw
+    li $t1, 64
+    xor $t3, $t3, $t1      # XOR operation for all bits
+    li $t1, 69
+    sb $t3, mem($t1)     # Store the calculated p0 in mem[276]
+
+    # p8 is always 0, so no calculation required
+    li $t1, 0
+    li $t3, 70
+    sb $t1, mem($t3)     # Store 0 for p8 in mem[280]
+    
+    # Return to the main routine
+    beq $t3, $t3, loop_continue_second
+
+
+
+# Inputs: $t1 (data_msw), $t2 (data_lsw), mem[244:260] (received parity bits)
+# Outputs: $t1 (F1F0 + '00000' + corrected_msw), $t2 (corrected_lsw)
+
+decode_one_block:
+    # Calculate the expected parity bits for the given data
+    beq $t3, $t3, calculate_expected_parity_bits
+
+decode_continue:
+    # Load the received parity bits
+    li $t3, 61
+    lbu $t1, mem($t3)   # Load p8
+    li $t3, 62
+    lbu $t2, mem($t3)   # Load p4
+    li $t3, 63
+    lbu $t3, mem($t3)   # Load p2
+
+    li $t1, 71
+    sb $t2, mem($t1)
+    li $t1, 72
+    sb $t2, mem($t1)
+    li $t1, 73
+    sb $t3, mem($t1)
+    
+    # Assuming we stored the received p1 at mem[296] and p0 at mem[300]
+    li $t3, 64
+    lbu $t1, mem($t3)   # Load p1
+    li $t3, 74
+    sb $t1, mem($t3)
+    li $t3, 65
+    lbu $t1, mem($t3)   # Load p0
+    li $t3, 75
+    sb $t1, mem($t3)
+
+    # Initialize error counter
+    li $t3, 0
+
+    # Compare received parity p8 to expected parity in mem[280]
+    li $t1, 70
+    lbu $t1, mem($t1)
+    li $t2, 71
+    lbu $t2, mem($t2)
+    beq $t1, $t2, no_error_p8
+    add $t3, $t3, $t3
+    li $t1, 1   ###
+    add $t3, $t3, $t1
+
+no_error_p8:
+
+    # Compare received parity p4 to expected parity in mem[264]
+    li $t1, 66
+    lbu $t1, mem($t1)
+    li $t2, 72
+    lbu $t2, mem($t2)
+    beq $t1, $t2, no_error_p4
+    add $t3, $t3, $t3
+    li $t1, 1   ###
+    add $t3, $t3, $t1
+
+no_error_p4:
+
+    # Compare received parity p2 to expected parity in mem[268]
+    li $t1, 67
+    lbu $t1, mem($t1)
+    li $t2, 73
+    lbu $t2, mem($t2)
+    beq $t1, $t2, no_error_p2
+    add $t3, $t3, $t3
+    li $t1, 1   ###
+    add $t3, $t3, $t1
+
+no_error_p2:
+
+    # Compare received parity p1 to expected parity in mem[272]
+    li $t1, 68
+    lbu $t1, mem($t1)
+    li $t2, 74
+    lbu $t2, mem($t2)
+    beq $t1, $t2, no_error_p1
+    add $t3, $t3, $t3
+    li $t1, 1   ###
+    add $t3, $t3, $t1
+
+no_error_p1:
+
+    # Compare received parity p0 to expected parity in mem[276]
+    li $t1, 69
+    lbu $t1, mem($t1)
+    li $t2, 75
+    lbu $t2, mem($t2)
+    beq $t1, $t2, no_error_p0
+    add $t3, $t3, $t3
+    li $t1, 1   ###
+    add $t3, $t3, $t1
+
+no_error_p0:
+
+    # Set F1F0 based on the number of errors
+    li $t1, 1          # Default F1F0 to '00' ###########
+    beq $t3, $t1, set_F1F0_one_error
+    beq $t3, $t1, set_F1F0_no_error
+
+    # If two or more errors, set F1F0 to '1X'
+    li $t1, 2          # 10 in binary
+    beq $t3, $t3, set_F1F0_end
+
+set_F1F0_one_error:
+    li $t1, 1          # If one error, set F1F0 to '01'
+
+set_F1F0_no_error:
+    # This step is added to ensure continuity. No operations are done here.
+
+set_F1F0_end:
+    # Shift the F1F0 value to make space for the data
+    add $t1, $t1, $t1
+    add $t1, $t1, $t1
+    add $t1, $t1, $t1
+    add $t1, $t1, $t1
+    add $t1, $t1, $t1
+    add $t1, $t1, $t1      # Shifted left 6 times
+    
+    # Now, OR the data_msw with the shifted F1F0
+    or $t1, $t1, $t2       # This will create F1F0 + '00000' + corrected_msw
+
+    # At this point, $t1 has the desired format: F1F0 + '00000' + corrected_msw
+    # And $t2 has the corrected_lsw
+
+    # Return to the main routine
+    beq $t3, $t3, decode_continue

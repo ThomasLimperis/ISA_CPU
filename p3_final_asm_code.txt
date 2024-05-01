@@ -1,0 +1,488 @@
+main:
+    
+    #op
+   # or $t1, $t1, 1          # Load the value 1 into $t1
+    li $t1, 1
+   #li $t2, 61           # Load the value 61 into $t2
+    li $t2, 61
+    sb $t1, mem($t2)
+   # sb $t1, mem + 61        # Store the value in $t1 at the calculated memory address
+    #this code is more like, store t1 into mem + t2
+    
+ 
+outer_loop:
+
+    #say t1 is 000, say mem is 00
+    li $t2, 60
+    lbu $t1, mem($t2) #this is my i value
+    li $t2, 16
+    beq $t1, $t2, end        # If i >= 32, exit loop
+    #p3 = m[32][7:3]
+    li $t3, 32                   #p3 = m[32][7:3]
+    lbu $t3, mem($t3)              # Load address of p3 into $t3
+    
+    li $t2, 61
+    lbu $t1, mem($t2)
+    li $t2, 62
+    sb $t1, mem($t2)
+    #j check_1 can see if continous is working
+    
+c1:
+    li $t2, 60
+    lbu $t1, mem($t2)
+    lbu $t1, mem($t1)
+    srl $t1, $t1, 3      # Shift bits 4-8 to the rightmost position
+    beq $t1, $t3, m1
+    
+c2:
+    li $t2, 60
+    lbu $t1, mem($t2)
+    lbu $t1, mem($t1)
+    li $t2, 248
+    #and $t1, $t1, 0xF8
+    and $t1, $t1, $t2
+    srl $t1, $t1, 3      # Shift bits 4-8 to the rightmost position
+    beq $t1, $t3, m2
+
+c3:
+    li $t2, 60
+    lbu $t1, mem($t2)
+    lbu $t1, mem($t1)
+    li $t2, 124
+    #and $t1, $t1, 0x7C
+    and $t1, $t1, $t2
+    srl $t1, $t1, 2      # Shift bits 4-8 to the rightmost position
+    beq $t1, $t3, m3
+c4:
+    li $t2, 60
+    lbu $t1, mem($t2)
+    lbu $t1, mem($t1)
+    li $t2, 62
+   # and $t1, $t1, 0x3E
+    and $t1, $t1, $t2
+    beq $t1, $t3, m4
+   # j check_1
+    beq $t1, $t1, check_1
+
+m1:
+    
+    #add $t4, $t4, $s5        # Increment total_occurrence
+    li $t2, 63
+    lbu $t1, mem($t2)
+    li $t2, 61
+    lbu $t2, mem($t2)
+    add $t1, $t1, $t2
+    li $t2, 63
+    sb $t1, mem($t2)
+    
+    li $t2, 62
+    lbu $t2, mem($t2)
+    li $t3, 0
+    beq $t2, $t3, b1
+  #  add $t5, $t5, $s5        # Increment byte_occurrence
+    li $t2, 64
+    lbu $t2, mem($t2)
+    
+    li $t3, 61
+    lbu $t1, mem($t3)
+    add $t2, $t2, $t1
+    li $t3, 64
+    sb $t2, mem($t3)
+    #li $t2, 0               # Set byte_flag to false
+    li $t3, 62
+    li $t2, 0
+    sb $t2, mem($t3)
+    li $t3, 32                   #p3 = m[32][7:3]
+    lbu $t3, mem($t3)              # Load address of p3 into $t3
+    beq $t3, $t3, c2
+   # j c2
+m2:
+    
+    #add $t4, $t4, $s5        # Increment total_occurrence
+    li $t2, 63
+    lbu $t1, mem($t2)
+    li $t2, 61
+    lbu $t2, mem($t2)
+    add $t1, $t1, $t2
+    li $t2, 63
+    sb $t1, mem($t2)
+    
+    li $t2, 62
+    lbu $t2, mem($t2)
+    li $t3, 0
+    beq $t2, $t3, b2
+  #  add $t5, $t5, $s5        # Increment byte_occurrence
+    li $t2, 64
+    lbu $t2, mem($t2)
+    
+    li $t3, 61
+    lbu $t1, mem($t3)
+    add $t2, $t2, $t1
+    li $t3, 64
+    sb $t2, mem($t3)
+    #li $t2, 0               # Set byte_flag to false
+    li $t3, 62
+    li $t2, 0
+    sb $t2, mem($t3)
+     li $t3, 32                   #p3 = m[32][7:3]
+    lbu $t3, mem($t3)              # Load address of p3 into $t3
+    #j c3
+    beq $t3, $t3, c3
+m3:
+    #add $t4, $t4, $s5        # Increment total_occurrence
+    li $t2, 63
+    lbu $t1, mem($t2)
+    li $t2, 61
+    lbu $t2, mem($t2)
+    add $t1, $t1, $t2
+    li $t2, 63
+    sb $t1, mem($t2)
+    
+    li $t2, 62
+    lbu $t2, mem($t2)
+    li $t3, 0
+    beq $t2, $t3, b3
+  #  add $t5, $t5, $s5        # Increment byte_occurrence
+    li $t2, 64
+    lbu $t2, mem($t2)
+    
+    li $t3, 61
+    lbu $t1, mem($t3)
+    add $t2, $t2, $t1
+    li $t3, 64
+    sb $t2, mem($t3)
+    #li $t2, 0               # Set byte_flag to false
+    li $t3, 62
+    li $t2, 0
+    sb $t2, mem($t3)
+     li $t3, 32                   #p3 = m[32][7:3]
+    lbu $t3, mem($t3)              # Load address of p3 into $t3
+   # j c4
+   beq $t3, $t3, c4
+m4:
+    #add $t4, $t4, $s5        # Increment total_occurrence
+    li $t2, 63
+    lbu $t1, mem($t2)
+    li $t2, 61
+    lbu $t2, mem($t2)
+    add $t1, $t1, $t2
+    li $t2, 63
+    sb $t1, mem($t2)
+    
+    li $t2, 62
+    lbu $t2, mem($t2)
+    li $t3, 0
+    beq $t2, $t3, b4
+  #  add $t5, $t5, $s5        # Increment byte_occurrence
+    li $t2, 64
+    lbu $t2, mem($t2)
+    
+    li $t3, 61
+    lbu $t1, mem($t3)
+    add $t2, $t2, $t1
+    li $t3, 64
+    sb $t2, mem($t3)
+    #li $t2, 0               # Set byte_flag to false
+    li $t3, 62
+    li $t2, 0
+    sb $t2, mem($t3)
+     li $t3, 32                   #p3 = m[32][7:3]
+    lbu $t3, mem($t3)              # Load address of p3 into $t3
+    #j check_1
+    beq $t3, $t3, check_1
+b1:
+    #j c2
+    beq $t3, $t3, c2
+b2: 
+    #j c3
+    beq $t3, $t3, c3
+b3:
+    #j c4
+    beq $t3, $t3, c4
+b4:
+    #j check_1
+    beq $t3, $t3, check_1
+    
+#below  this line  is for continous only
+ check_1:
+    #comparison checking
+
+    #add $s1, $t0, $t1      # Calculate address of mem[i +1] 
+    #lbu $s2, 0($s1)          # Load a byte from mem[i] + j into $s2
+    #lbu $t8, 1($t0)          # Load the first byte of p3 into $t8
+    li $t2, 60
+    lbu $t1, mem($t2)
+    li $t2, 61
+    lbu $t2, mem($t2)
+    add $t1, $t1, $t2
+    lbu $t2, mem($t1) #loading mem[i] into t2
+    
+    
+    lbu $t3, mem($t1)
+    #now have mem[i] in t2  and mem [i+1] in t4
+    
+    
+    # Extract bits 4-7 from mem[i] and bit 0 from mem[i+1]
+    li $t1, 30
+   # andi $t2, $t2, 0x1E   # Keep only bits 1-4 of $s2
+   and $t2, $t2, $t1
+   # sll $t2, $t2, 1  # Shift the value in $s2 left by one position
+    add $t2, $t2, $t2 
+    li $t1, 128
+    #andi $t3, $t3, 0x80   # Keep only bit 8 of $t8
+    and $t3, $t3, $t1
+    #srl $t3, $t3, 7    #shift bit 7 to the right most position of bit 1
+    srl $t3, $t3, 3
+    srl $t3, $t3, 3
+    srl $t3, $t3, 1
+    
+   # sll $t8, $t8, 4        # Shift bit 7 to the leftmost position (bit 4)
+    or $t2, $t2, $t3       # Combine bits 0-3 from $s2 with bit 4 from $t8
+     li $t3, 32                   #p3 = m[32][7:3]
+    lbu $t3, mem($t3)              # Load address of p3 into $t3
+    beq $t2, $t3, match_1
+ check_2:
+    #comparison checking
+    #add $s1, $t0, $t1       # Calculate address of mem[i + 1]
+    #lbu $s2, 0($s1)        # Load a byte from mem[i] + j into $s2
+    #lbu $t8, 1($t0)        # Load the first byte of p3 into $t8
+    li $t2, 60
+    lbu $t1, mem($t2)
+    li $t2, 61
+    lbu $t2, mem($t2)
+    add $t1, $t1, $t2
+    lbu $t2, mem($t1) #loading mem[i] into t2
+    lbu $t3, mem($t1)
+    # lbu $t4, 500
+    
+    # Extract bits 5-7 from mem[i] and bits 0-1 from mem[i+1]
+   # andi $t2, $t2, 0x0E   # Keep only bits 1-3 of $s2
+   li $t1, 14
+   and $t2, $t2, $t1
+   # andi $t3, $t3, 0xC0   # Keep only bits 7-8 of $t8
+   li $t1, 192
+   and $t3, $t3, $t1
+   # srl $t3, $t3, 6       # Shift bits 7-8 of $t8 to the rightmost posit
+    srl $t3, $t3, 3
+    srl $t3, $t3, 3
+    or $t2, $t2, $t3    
+     li $t3, 32                   #p3 = m[32][7:3]
+    lbu $t3, mem($t3)              # Load address of p3 into $t3
+    beq $t2, $t3, match_2
+ check_3:
+    #comparison checking
+    #add $s1, $t0, $t1       # Calculate address of mem[i] + j
+   # lbu $s2, 0($s1)        # Load a byte from mem[i] + j into $s2
+   # lbu $t8, 1($t0)        # Load the first byte of p3 into $t8
+    li $t2, 60
+    lbu $t1, mem($t2)
+    li $t2, 61
+    lbu $t2, mem($t2)
+    add $t1, $t1, $t2
+    lbu $t2, mem($t1) #loading mem[i] into t2
+    lbu $t3, mem($t1)
+  
+
+    # Extract bits 1-2 from mem[i] and bits 6-8 from mem[i+1]
+    li $t1, 6
+    and $t2, $t2, $t1   # Keep only bits 1-2 of $s2
+    #sll $t2, $t2, 3
+    add $t2, $t2, $t2 
+    add $t2, $t2, $t2 
+    add $t2, $t2, $t2 
+    li $t1, 224
+    and $t3, $t3, $t1   # Keep only bits 6-8 of $t8
+   # srl $t3, $t3, 5       # Shift bits 6-8 of $t8 to the rightmost position
+   srl $t3, $t3, 3       # Shift bits 6-8 of $t8 to the rightmost position
+   srl $t3, $t3, 2
+    or $t2, $t2, $t3    
+     li $t3, 32                   #p3 = m[32][7:3]
+    lbu $t3, mem($t3)              # Load address of p3 into $t3
+    beq $t2, $t3, match_3
+
+ check_4:
+    #comparison checking
+   # add $s1, $t0, $t1       # Calculate address of mem[i] + j
+  #  lbu $s2, 0($s1)        # Load a byte from mem[i] + j into $s2
+    #lbu $t8, 0($t0)        # Load the first byte of p3 into $t8
+    li $t2, 60
+    lbu $t1, mem($t2)
+    li $t2, 61
+    lbu $t2, mem($t2)
+    add $t1, $t1, $t2
+    lbu $t2, mem($t1) #loading mem[i] into t2
+    lbu $t3, mem($t1)
+    
+   # Extract bit 1 from mem[i] and bits 5-8 from mem[i+1]
+    li $t1, 2
+    and $t2, $t2, $t1   # Keep only bit 1 of $s2
+  #  sll $t2, $t2, 4       # Shift bit 1 to the left 4 times
+  
+    add $t2, $t2, $t2 
+    add $t2, $t2, $t2 
+    add $t2, $t2, $t2 
+    add $t2, $t2, $t2 
+    li $t1, 240
+    and $t3, $t3, $t1   # Keep only bits 5-8 of $t8
+    srl $t3, $t3, 3
+    srl $t3, $t3, 1
+    or $t2, $t2, $t3
+     li $t3, 32                   #p3 = m[32][7:3]
+    lbu $t3, mem($t3)              # Load address of p3 into $t3
+    beq $t2, $t3, match_4
+    
+    li $t3, 60
+    lbu $t1, mem($t3)
+    li $t3, 61
+    lbu $t2 mem($t3)
+    add $t1, $t1, $t2
+    li $t3, 60
+    sb $t1, mem($t3)
+     li $t3, 32                   #p3 = m[32][7:3]
+    lbu $t3, mem($t3)              # Load address of p3 into $t3
+    #add $t1, $t1, $s5      # Increment i
+    
+    #j outer_loop
+    beq $t3, $t3, outer_loop
+match_1:
+    
+    
+    #add $t4, $t4, $s5        # Increment total_occurrence
+    li $t3, 63
+    lbu $t1, mem($t3)
+    li $t3, 61
+    lbu $t2, mem($t3)
+    add $t1, $t1, $t2
+    li $t3, 63
+    sb $t1, mem($t3)
+    li $t3, 62
+    lbu $t2, mem($t3)
+    li $t3, 0
+    beq $t2, $t3, byte_not_occurred1
+  #  add $t5, $t5, $s5        # Increment byte_occurrence
+  li $t3, 64
+    lbu $t2, mem($t3)
+    li $t3, 61
+    lbu $t1, mem($t3)
+    add $t2, $t2, $t1
+    li $t3, 64
+    sb $t2, mem($t3)
+    #li $t2, 0               # Set byte_flag to false
+    li $t3, 62
+    li $t2, 0
+    sb $t2, mem($t3)
+    #j check_2
+    beq $t3, $t3, check_2
+ match_2:
+     
+    
+    #add $t4, $t4, $s5        # Increment total_occurrence
+    li $t3, 63
+    lbu $t1, mem($t3)
+    li $t3, 61
+    lbu $t2, mem($t3)
+    add $t1, $t1, $t2
+    li $t3, 63
+    sb $t1, mem($t3)
+    li $t3, 62
+    lbu $t2, mem($t3)
+    li $t1, 0
+    beq $t2, $t1, byte_not_occurred2
+  #  add $t5, $t5, $s5        # Increment byte_occurrence
+  li $t3, 64
+    lbu $t2, mem($t3)
+    li $t3, 61
+    lbu $t1, mem($t3)
+    add $t2, $t2, $t1
+    li $t3, 64
+    sb $t2, mem($t3)
+    #li $t2, 0               # Set byte_flag to false
+    li $t3, 62
+    li $t2, 0
+    sb $t2, mem($t3)
+    #j check_3
+    beq $t3, $t3, check_3
+ match_3:
+     
+    
+    #add $t4, $t4, $s5        # Increment total_occurrence
+    li $t3, 63
+    lbu $t1, mem($t3)
+    li $t3, 61
+    lbu $t2, mem($t3)
+    add $t1, $t1, $t2
+    li $t3, 63
+    sb $t1, mem($t3)
+    li $t3, 62
+    lbu $t2, mem($t3)
+    li $t1, 0
+    beq $t2, $t1, byte_not_occurred3
+  #  add $t5, $t5, $s5        # Increment byte_occurrence
+  li $t3, 64
+    lbu $t2, mem($t3)
+    li $t3, 61
+    lbu $t1, mem($t3)
+    add $t2, $t2, $t1
+    li $t3, 64
+    sb $t2, mem($t3)
+    #li $t2, 0               # Set byte_flag to false
+    li $t3, 62
+    li $t2, 0
+    sb $t2, mem($t3)
+    #j check_4
+    beq $t3, $t3, check_4
+ match_4:
+   # add $t4, $t4, $s5        # Increment total_occurrence
+    li $t3, 63
+    lbu $t1, mem($t3)
+    li $t3, 63
+    lbu $t2, mem($t3)
+    add $t1, $t1, $t2
+    li $t3, 63
+    sb $t1, mem($t3)
+    
+    li $t3, 63
+    lbu $t2, mem($t3)
+    li $t1, 0
+    beq $t2, $t1, byte_not_occurred4
+   # add $t5, $t5, $s5        # Increment byte_occurrence
+   li $t3, 63
+    lbu $t2, mem($t3)
+    li $t3, 63
+    lbu $t1, mem($t3)
+    add $t2, $t2, $t1
+    li $t3, 63
+    sb $t2, mem($t3)
+    
+   # li $t2, 0               # Set byte_flag to false
+  #  add $t1, $t1, $s5      # Increment i
+    li $t3, 60
+    lbu $t1, mem($t3)
+    li $t3, 61
+    lbu $t2, mem($t3)
+    add $t1, $t1, $t2
+    li $t3, 60
+    sb $t1, mem($t3)
+   # j outer_loop
+   beq $t3, $t3, outer_loop
+byte_not_occurred1:
+    #j check_2
+    beq $t3, $t3, check_2
+byte_not_occurred2:
+   # j check_3
+   beq $t3, $t3, check_3
+byte_not_occurred3:
+   # j check_4
+   beq $t3, $t3, check_4
+byte_not_occurred4:
+   # add $t1, $t1, $s5        # Increment i
+   
+    li $t3, 60
+    lbu $t1, mem($t3) 
+    li $t3, 61
+    lbu $t2 mem($t3)
+    add $t1, $t1, $t2
+    li $t3, 60
+    sb $t1, mem($t3)
+    #j outer_loop
+    beq $t3, $t3, outer_loop
